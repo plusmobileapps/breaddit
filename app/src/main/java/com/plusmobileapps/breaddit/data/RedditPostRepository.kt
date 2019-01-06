@@ -30,25 +30,7 @@ class RedditPostRepository(private val dao: RedditPostDao, private val client: O
 
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body()?.string() ?: return
-                    val jsonObject = JSONObject(body)
-                    val data = jsonObject.optJSONObject("data")
-                    val children = data.optJSONArray("children")
-                    for (i in 0..(children.length() - 1)) {
-                        val child = children.getJSONObject(i)
-                        val data = child.getJSONObject("data")
-                        val redditPost = RedditPost(
-                            subreddit = data.getString("subreddit"),
-                            author_fullname = data.getString("author_fullname"),
-                            title = data.getString("title"),
-                            ups = data.getInt("ups"),
-                            url = data.getString("url")
-                        )
-                        println("$redditPost")
-                        GlobalScope.launch {
-                            dao.insertPost(redditPost)
-                        }
-
-                    }
+                    val response = gson.fromJson(body, RedditFeedResponse::class.java)
                 }
             })
         }
@@ -57,3 +39,59 @@ class RedditPostRepository(private val dao: RedditPostDao, private val client: O
     }
 
 }
+
+
+data class RedditFeedResponse(
+    val kind: String,
+    val data: RedditFeedData
+)
+
+data class RedditFeedData(
+    val modhash: String,
+    val dist: Int,
+    val children: List<RedditFeedChild>,
+    val after: String
+)
+
+data class RedditFeedChild(
+    val kind: String,
+    val data: ApiRedditPost
+)
+
+data class ApiRedditPost(
+    val id: String,
+    val author: String,
+    val title: String,
+    val subreddit_name_prefixed: String,
+    val score: Int,
+    val created: Int,
+    val subreddit_id: String,
+    val num_comments: Int,
+    val permalink: String,
+    val url: String,
+    val subreddit_subscribers: Int,
+    val created_utc: Int,
+    val media: Media,
+    val is_video: Boolean
+)
+
+data class Media(
+    val oembed: Embedded,
+    val type: String
+)
+
+data class Embedded(
+    val provider_url: String,
+    val description: String,
+    val title: String,
+    val url: String,
+    val type: String,
+    val thumbnail_width: Int,
+    val height: Int,
+    val width: Int,
+    val html: String,
+    val version: String,
+    val provider_name: String,
+    val thumbnail_url: String,
+    val thumbnail_height: Int
+)
