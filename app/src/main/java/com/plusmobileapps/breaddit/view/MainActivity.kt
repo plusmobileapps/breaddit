@@ -1,30 +1,15 @@
-package com.plusmobileapps.breaddit
+package com.plusmobileapps.breaddit.view
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.transaction
+import com.plusmobileapps.breaddit.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import android.content.Intent
-import android.net.Uri
-import android.nfc.Tag
-import android.util.Base64
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import okhttp3.*
-import org.json.JSONObject
-import org.koin.android.viewmodel.ext.android.viewModel
-import java.io.IOException
-
 
 
 class MainActivity : AppCompatActivity() {
-
-    val viewModel: MainViewModel by viewModel()
 
     companion object {
         val TAG = MainActivity::class.java.canonicalName
@@ -34,19 +19,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        login_button.setOnClickListener {
-            viewModel.onLoginButtonClicked()
+        supportFragmentManager.transaction {
+            replace(R.id.content_frame, RedditFeedFragment())
         }
-
     }
 
 
     override fun onResume() {
         super.onResume()
-        viewModel.redditPosts.observe(this, Observer { redditPosts ->
-            //TODO submit the list
-        })
 
 //        if (intent != null && intent.action == Intent.ACTION_VIEW) {
 //            val uri = intent.data

@@ -8,17 +8,22 @@ import com.google.gson.annotations.SerializedName
 @Entity
 data class RedditPost(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
 
-    val subreddit: String,
-
-    val author_fullname: String,
-
+    val author: String,
     val title: String,
-
-    val ups: Int,
-
-    val url: String
+    val selfText: String,
+    val subreddit_name_prefixed: String,
+    val score: Int,
+    val created: Int,
+    val subreddit_id: String,
+    val num_comments: Int,
+    val permalink: String,
+    val url: String,
+    val subreddit_subscribers: Int,
+    val created_utc: Int,
+//    val media: Media?,
+    val is_video: Boolean
 
 )
